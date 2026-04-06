@@ -52,7 +52,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pytest-timeout \
     python3-flake8 \
     python3-mypy \
-    python3-rosdep \
     libasio-dev \
     libtinyxml2-dev \
     libcunit1-dev \
@@ -82,6 +81,7 @@ RUN apt-get update && \
     # The following packages are only available from the ROS apt repo.
     apt-get install -y --no-install-recommends \
       python3-vcstool \
+      python3-rosdep \
       python3-colcon-common-extensions \
       python3-bloom \
       python3-pytest-repeat \
