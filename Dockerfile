@@ -99,7 +99,8 @@ RUN apt-get update && \
       python3-colcon-common-extensions \
       python3-bloom \
       python3-pytest-repeat \
-      libfoonathan-memory-dev
+      libfoonathan-memory-dev \
+      ros-dev-tools
 
 # Add local rosdep overrides for Debian Bookworm gaps.
 COPY overrides/rosdep-bookworm-overrides.yaml /etc/ros/rosdep/bookworm-overrides.yaml
@@ -119,6 +120,15 @@ RUN chmod +x /usr/local/bin/*.sh
 
 ENV HOME=/home/builder
 USER builder
+
+RUN mkdir -p ${HOME}/ros2_jazzy/src
+WORKDIR ${HOME}/ros2_jazzy
+RUN vcs import --input https://raw.githubusercontent.com/ros2/ros2/jazzy/ros2.repos src && \
+    sudo rosdep init || true && \
+    rosdep update && \
+    rosdep install --from-paths src --ignore-src -y --skip-keys "fastcdr rti-connext-dds-6.0.1 urdfdom_headers" && \
+    colcon build --symlink-install --packages-skip image_tools intra_process_demo
+
 WORKDIR /workspace
 
 CMD ["/bin/bash"]
