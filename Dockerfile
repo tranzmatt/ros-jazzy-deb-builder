@@ -8,7 +8,7 @@ ENV LC_ALL=en_US.UTF-8
 ENV ROS_DISTRO=jazzy
 ARG BUILDER_UID=1000
 ARG BUILDER_GID=1000
-ARG ROS_APT_SOURCE_VERSION=0.4.0
+ARG ROS_APT_SOURCE_VERSION=1.1.0
 
 # Packages available from Debian Bookworm base repos — installed before the
 # ROS apt repository is configured.
