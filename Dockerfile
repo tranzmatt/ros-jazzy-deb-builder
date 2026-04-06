@@ -71,12 +71,19 @@ RUN sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 
 # Install ROS apt source bootstrap package for Debian 12 (bookworm).
-# This provides apt repository configuration for ROS 2 binaries and sources.
+# dpkg -i installs the signing key to /usr/share/keyrings/ros2-archive-keyring.gpg
+# and a ros2.sources symlink, but the bundled sources file uses an inline armored
+# PGP key that apt on Bookworm may silently reject.  Replace the symlink with our
+# own clean DEB822 file referencing the installed keyring path directly, with both
+# deb and deb-src enabled so that apt-get source works.
 RUN apt-get update && \
     curl -L -o /tmp/ros2-apt-source.deb \
       "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.bookworm_all.deb" && \
     dpkg -i /tmp/ros2-apt-source.deb && \
     rm -f /tmp/ros2-apt-source.deb && \
+    rm -f /etc/apt/sources.list.d/ros2.sources && \
+    printf 'Types: deb deb-src\nURIs: http://packages.ros.org/ros2/ubuntu\nSuites: bookworm\nComponents: main\nSigned-By: /usr/share/keyrings/ros2-archive-keyring.gpg\n' \
+      > /etc/apt/sources.list.d/ros2-bookworm.sources && \
     apt-get update && \
     # The following packages are only available from the ROS apt repo.
     apt-get install -y --no-install-recommends \
@@ -86,29 +93,6 @@ RUN apt-get update && \
       python3-bloom \
       python3-pytest-repeat \
       libfoonathan-memory-dev
-
-# Ensure deb-src is enabled for the ROS 2 repository.
-# ros2-apt-source writes a DEB822 .sources file; handle that format as well as
-# the legacy .list format so apt-get source works in both cases.
-RUN \
-    # DEB822 .sources format: append deb-src to the Types: field if absent.
-    for f in /etc/apt/sources.list.d/*.sources; do \
-      [ -f "$f" ] || continue; \
-      grep -qiE 'packages\.ros\.org|ros2' "$f" || continue; \
-      if grep -q '^Types:' "$f" && ! grep -q 'deb-src' "$f"; then \
-        sed -i 's/^\(Types:[[:space:]]*\)\(.*\)/\1\2 deb-src/' "$f"; \
-      fi; \
-    done; \
-    # Legacy .list format: append a deb-src line if absent.
-    for f in /etc/apt/sources.list.d/*.list /etc/apt/sources.list; do \
-      [ -f "$f" ] || continue; \
-      grep -qE '^deb[[:space:]].*packages\.ros\.org' "$f" || continue; \
-      if ! grep -qE '^deb-src[[:space:]].*packages\.ros\.org' "$f"; then \
-        grep -E '^deb[[:space:]].*packages\.ros\.org' "$f" \
-          | sed 's/^deb /deb-src /' >> "$f"; \
-      fi; \
-    done && \
-    apt-get update
 
 # Add local rosdep overrides for Debian Bookworm gaps.
 COPY overrides/rosdep-bookworm-overrides.yaml /etc/ros/rosdep/bookworm-overrides.yaml
