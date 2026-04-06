@@ -144,6 +144,22 @@ Debian Bookworm is not the primary target environment for Jazzy. Expect some fri
 
 That is why `overrides/rosdep-bookworm-overrides.yaml` exists.
 
+## Where the Jazzy packages actually live
+
+`packages.ros.org/ros2/ubuntu bookworm` contains **tooling only** (`colcon`, `bloom`,
+`rosdep`, etc.).  It has **no `ros-jazzy-*` packages** — not binary, not source.
+
+All `ros-jazzy-*` source and binary packages are published under the **`noble` suite**
+(Ubuntu 24.04).  This repo therefore configures:
+
+- `deb … bookworm` — binary tooling for the build environment
+- `deb-src … noble` — Jazzy source packages for `apt-get source`
+
+This means `apt-get source ros-jazzy-rclcpp` fetches the Debian source package as
+published for Ubuntu Noble, and we compile it on Bookworm.  Dependency name
+differences between Noble and Bookworm are the main source of friction and are
+addressed via `overrides/rosdep-bookworm-overrides.yaml` and `build-dep` overrides.
+
 ## Working with Codex in VS Code
 
 This repo is meant to be friendly to repo-aware tools. The important files are:

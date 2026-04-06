@@ -82,12 +82,16 @@ RUN apt-get update && \
     dpkg -i /tmp/ros2-apt-source.deb && \
     rm -f /tmp/ros2-apt-source.deb && \
     rm -f /etc/apt/sources.list.d/ros2.sources && \
+    # Binary tooling (colcon, bloom, rosdep, etc.) lives under the bookworm suite.
     echo "deb [signed-by=/usr/share/keyrings/ros2-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu bookworm main" \
       > /etc/apt/sources.list.d/ros2-bookworm.list && \
-    echo "deb-src [signed-by=/usr/share/keyrings/ros2-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu bookworm main" \
+    # ros-jazzy-* source packages only exist under the noble suite.
+    # We add it as deb-src only so apt-get source can fetch Jazzy packages
+    # without pulling in Ubuntu Noble binaries.
+    echo "deb-src [signed-by=/usr/share/keyrings/ros2-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu noble main" \
       >> /etc/apt/sources.list.d/ros2-bookworm.list && \
     apt-get update && \
-    apt-cache show ros-jazzy-rclcpp > /dev/null && \
+    apt-cache showsrc ros-jazzy-rclcpp > /dev/null && \
     # The following packages are only available from the ROS apt repo.
     apt-get install -y --no-install-recommends \
       python3-vcstool \
