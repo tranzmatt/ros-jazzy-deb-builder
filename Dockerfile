@@ -10,7 +10,8 @@ ARG BUILDER_UID=1000
 ARG BUILDER_GID=1000
 ARG ROS_APT_SOURCE_VERSION=0.4.0
 
-# Base OS tooling, locale, ROS build tooling, and Debian packaging tools.
+# Packages available from Debian Bookworm base repos — installed before the
+# ROS apt repository is configured.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     locales \
     ca-certificates \
@@ -34,6 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     equivs \
     quilt \
     dh-python \
+    dctrl-tools \
     python3 \
     python3-dev \
     python3-pip \
@@ -45,17 +47,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pytest \
     python3-pytest-cov \
     python3-pytest-mock \
-    python3-pytest-repeat \
     python3-pytest-rerunfailures \
     python3-pytest-runner \
     python3-pytest-timeout \
     python3-flake8 \
     python3-mypy \
-    python3-vcstool \
-    python3-colcon-common-extensions \
-    python3-bloom \
-    python3-rosdep2 \
-    dctrl-tools \
     libasio-dev \
     libtinyxml2-dev \
     libcunit1-dev \
@@ -83,8 +79,14 @@ RUN apt-get update && \
     rm -f /tmp/ros2-apt-source.deb && \
     apt-get update && \
     apt-get install -y --no-install-recommends ros-apt-source && \
-    # libfoonathan-memory-dev is only available from the ROS apt repo.
-    apt-get install -y --no-install-recommends libfoonathan-memory-dev
+    # The following packages are only available from the ROS apt repo.
+    apt-get install -y --no-install-recommends \
+      python3-vcstool \
+      python3-colcon-common-extensions \
+      python3-bloom \
+      python3-rosdep2 \
+      python3-pytest-repeat \
+      libfoonathan-memory-dev
 
 # Ensure deb-src is enabled for the ROS 2 repository.
 # ros2-apt-source writes a DEB822 .sources file; handle that format as well as
