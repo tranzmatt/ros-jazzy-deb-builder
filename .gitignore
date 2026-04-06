@@ -1,0 +1,11 @@
+out/*
+!out/.gitkeep
+workspace/
+*.deb
+*.build
+*.buildinfo
+*.changes
+*.dsc
+*.tar.*
+*.debian.tar.*
+*.orig.tar.*

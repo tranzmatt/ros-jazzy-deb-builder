@@ -1,0 +1,9 @@
+# Apt source package names used by validate-colcon-workspace.sh.
+# Each package's source tree is fetched, package.xml dirs are extracted into
+# the colcon workspace, and colcon build is run across all of them together.
+# Expand only after the individual Debian builds in core-packages.txt succeed.
+# rcutils must precede rcl and rclcpp because they depend on it.
+ros-jazzy-ament-cmake
+ros-jazzy-rcutils
+ros-jazzy-rcl
+ros-jazzy-rclcpp

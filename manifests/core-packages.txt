@@ -1,0 +1,6 @@
+# Apt source package names used for single-package Debian build validation
+# (validate-debian-build.sh / build-debs.sh).  Start tiny — add packages only
+# after their upstream in this list builds cleanly on Bookworm.
+ros-jazzy-ament-cmake
+ros-jazzy-rcl
+ros-jazzy-rclcpp

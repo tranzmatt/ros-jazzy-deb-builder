@@ -1,0 +1,54 @@
+# Local rosdep overrides for Debian Bookworm.
+#
+# These entries map rosdep keys to the correct Debian Bookworm package names
+# where the default rosdep database uses Ubuntu-specific names, missing
+# entries, or packages that were renamed/removed between Debian releases.
+#
+# Format:
+#   <rosdep_key>:
+#     debian:
+#       bookworm: [<deb-package>, ...]
+#
+# Populate this file by running validate-debian-build.sh or
+# validate-colcon-workspace.sh and noting every "cannot locate" or
+# "no package found" rosdep error.  The rosdep key is printed in the error.
+#
+# ── Known gaps for ROS Jazzy on Debian Bookworm ──────────────────────────────
+
+# python3-nose was removed from Debian Bookworm; ROS packages that declare a
+# rosdep dep on python3-nose should use pytest instead.
+python3-nose:
+  debian:
+    bookworm: [python3-pytest]
+
+# gmock: in Bookworm the mock library ships as a separate package.
+gmock:
+  debian:
+    bookworm: [libgmock-dev]
+
+gtest:
+  debian:
+    bookworm: [libgtest-dev]
+
+# spdlog: package name is consistent on Bookworm but absent from the rosdep
+# database for the debian platform in older indices.
+spdlog:
+  debian:
+    bookworm: [libspdlog-dev]
+
+# tinyxml2: consistent name on Bookworm.
+tinyxml2:
+  debian:
+    bookworm: [libtinyxml2-dev]
+
+# yaml-cpp: consistent name on Bookworm.
+yaml-cpp:
+  debian:
+    bookworm: [libyaml-cpp-dev]
+
+# curl: consistent name on Bookworm.
+curl:
+  debian:
+    bookworm: [libcurl4-openssl-dev]
+
+# ── Add entries below as you encounter new failures ──────────────────────────
