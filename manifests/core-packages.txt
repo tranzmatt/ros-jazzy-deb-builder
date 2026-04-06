@@ -1,6 +1,16 @@
-# Apt source package names used for single-package Debian build validation
-# (validate-debian-build.sh / build-debs.sh).  Start tiny — add packages only
-# after their upstream in this list builds cleanly on Bookworm.
-ros-jazzy-ament-cmake
-ros-jazzy-rcl
-ros-jazzy-rclcpp
+# Apt source package names for single-package Debian builds
+# (validate-debian-build.sh / build-debs.sh).
+#
+# Because no ros-jazzy-* binaries exist for Bookworm, packages must be built
+# and installed in strict dependency order — each .deb must be dpkg -i'd before
+# the next tier can be built.
+#
+# Only ros-jazzy-ament-package has zero ros-jazzy build-deps and can be built
+# standalone.  Everything else in the rclcpp closure requires at least one
+# ros-jazzy dep, so the full Debian bootstrap requires building all ~100
+# packages from workspace-packages.txt in topological order.
+#
+# For now, start with the true leaf and verify the toolchain is working before
+# attempting a full bootstrap.
+
+ros-jazzy-ament-package
