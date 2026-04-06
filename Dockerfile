@@ -78,7 +78,6 @@ RUN apt-get update && \
     dpkg -i /tmp/ros2-apt-source.deb && \
     rm -f /tmp/ros2-apt-source.deb && \
     apt-get update && \
-    apt-get install -y --no-install-recommends ros-apt-source && \
     # The following packages are only available from the ROS apt repo.
     apt-get install -y --no-install-recommends \
       python3-vcstool \
